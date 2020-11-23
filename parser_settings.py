@@ -10,3 +10,5 @@ FORMS = {
 }
 
 CSV_PATH = './csv'
+
+EXCEL_REG_NUMS = './reg_nums.xlsx'

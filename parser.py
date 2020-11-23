@@ -1,10 +1,11 @@
-import shutil
-from pathlib import Path
+from fake_useragent import settings
 import parser_settings as settings
+from pathlib import Path
 import download_settings
+import shutil
+import pandas
 import dbf
 import os
-import pandas
 
 
 class Parser:
@@ -39,6 +40,13 @@ class Parser:
         dataframe.to_csv(path, index=False)
 
     @staticmethod
+    def excel_pars_reg_nums(dataframe):
+        reg_nums_dataframe = pandas.read_excel(settings.EXCEL_REG_NUMS)
+        reg_nums = reg_nums_dataframe[reg_nums_dataframe.keys()[0]].to_list()
+        dataframe = dataframe[dataframe.REGN.isin(reg_nums)]
+        return dataframe
+
+    @staticmethod
     def pars_forms():
         Parser.create_csv_folder()
         for form_name in settings.FORMS:
@@ -47,9 +55,10 @@ class Parser:
             dataframes = []
             for date in os.listdir(form_dir):
                 date_dir = '{}/{}'.format(form_dir, date)
-                file = [file for file in os.listdir(date_dir) if form.pars_file in file][0]
+                file = [file for file in os.listdir(date_dir) if form.pars_file.lower() in file.lower()][0]
                 file_dir = '{}/{}'.format(date_dir, file)
                 dataframes.append(Parser.dbf_to_dataframe(file_dir))
             dataframe = pandas.concat(dataframes)
+            dataframe = Parser.excel_pars_reg_nums(dataframe)
             dataframe = form.processing_func(dataframe)
             Parser.save_dataframe(dataframe, form_name)
