@@ -1,5 +1,5 @@
 from scraper import Scraper
-from parser import Parser
+from dbf_parser import Parser
 
 
 def main():
