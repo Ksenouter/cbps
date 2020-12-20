@@ -37,7 +37,7 @@ class Parser:
     @staticmethod
     def save_dataframe(dataframe, form_name, as_source=False):
         path = '{}/{}.csv'.format(settings.SOURCE_CSV_PATH if as_source else settings.CSV_PATH, form_name)
-        dataframe.to_csv(path, index=False)
+        dataframe.to_csv(path, index=False, encoding='cp866')
 
     @staticmethod
     def excel_pars_reg_nums(dataframe):
@@ -95,7 +95,7 @@ class Parser:
         for form_name in settings.FORMS:
             print('Reading dataframe from csv for form %s...' % form_name)
             csv_path = '{}/{}.csv'.format(settings.SOURCE_CSV_PATH, form_name)
-            dataframe = pandas.read_csv(csv_path)
+            dataframe = pandas.read_csv(csv_path, encoding='cp866')
             print('Reading dataframe completed!\n')
             print('Processing %s form...' % form_name)
             dataframe = settings.FORMS[form_name].processing_func(dataframe)
