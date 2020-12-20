@@ -1,11 +1,11 @@
 import download_settings as settings
-import parser_settings
+from pyunpack import Archive
 from pathlib import Path
+import parser_settings
 import itertools
 import requests
 import shutil
 import os
-import patoolib
 
 
 class Scraper:
@@ -56,5 +56,5 @@ class Scraper:
             Path('{}/{}'.format(settings.FILES_PATH, form)).mkdir(parents=True, exist_ok=True)
             extract_path = '{}/{}/{}'.format(settings.FILES_PATH, form, file[:-4])
             Path(extract_path).mkdir(parents=True, exist_ok=True)
-            patoolib.extract_archive(rar_file_path, outdir=extract_path)
+            Archive(rar_file_path).extractall(extract_path)
         return True
