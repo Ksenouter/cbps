@@ -10,5 +10,6 @@ FORMS = {
 }
 
 CSV_PATH = './csv'
+SOURCE_CSV_PATH = './source_csv'
 
 EXCEL_REG_NUMS = './reg_nums.xlsx'

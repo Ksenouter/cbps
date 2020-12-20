@@ -6,7 +6,7 @@ def main():
     scraper = Scraper()
     scraper.download_files()
     scraper.extract_downloads()
-    Parser.pars_forms()
+    Parser.pars_forms(recreate_sources=False)
 
 
 if __name__ == '__main__':
