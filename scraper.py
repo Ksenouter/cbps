@@ -28,6 +28,7 @@ class Scraper:
         if self.check_downloads_folder():
             print('Downloads found!\n')
             return
+        print('Downloads not found!\n')
 
         url = self.BASE_URL + 'vfs/credit/forms/'
         Path(settings.PATH).mkdir(parents=True, exist_ok=True)
@@ -42,7 +43,9 @@ class Scraper:
         if os.path.exists(settings.FILES_PATH) and os.path.isdir(settings.FILES_PATH):
             dirs = []
             for form_name in parser_settings.FORMS:
-                dirs.extend(os.listdir('{}/{}'.format(settings.FILES_PATH, form_name)))
+                form_files_dir = '{}/{}'.format(settings.FILES_PATH, form_name)
+                if os.path.exists(form_files_dir) and os.path.isdir(form_files_dir):
+                    dirs.extend(os.listdir(form_files_dir))
             server_dirs = [file[:-4] for file in self.get_files_names()]
             result = sorted(dirs) == sorted(server_dirs)
             return True if result else shutil.rmtree(settings.FILES_PATH, ignore_errors=True)
@@ -55,6 +58,7 @@ class Scraper:
         if self.check_files_folder():
             print('Unpacked folders found!\n')
             return True
+        print('Unpacked folders not found!\n')
 
         Path(settings.FILES_PATH).mkdir(parents=True, exist_ok=True)
         for file in os.listdir(settings.PATH):

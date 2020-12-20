@@ -1,4 +1,3 @@
-from fake_useragent import settings
 import parser_settings as settings
 from pathlib import Path
 import download_settings
