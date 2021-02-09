@@ -2,13 +2,14 @@ from collections import namedtuple
 import parser_processing
 
 
-Form = namedtuple('Form', 'pars_file processing_func')
 FORMS = {
-    '101': Form('B1.DBF', parser_processing.processing_form_101),
-    '102': Form('_P1.DBF', parser_processing.processing_form_102),
+    '101': 'B1.DBF',
+    '102': '_P1.DBF',
 }
 
-CSV_PATH = './csv'
 SOURCE_CSV_PATH = './source_csv'
 
-EXCEL_REG_NUMS = './reg_nums.xlsx'
+OUTPUT_PATH = './output'
+
+INPUT_PATH = './input'
+EXCEL_REG_NUMS = INPUT_PATH + '/reg_nums.xlsx'

@@ -1,11 +1,12 @@
+from dbf_parser import Parser
+import parser_settings as settings
 import pandas as pd
 
 
-def processing_form_101(dataframe):
+def processing_forms(forms_df: dict):
     # Place to write code
-    return dataframe
 
+    # reg_nums_df = Parser.load_dataframe_from_input(settings.EXCEL_REG_NUMS)
+    # Parser.save_dataframe_to_output(forms_df['101'], '/output.csv')
 
-def processing_form_102(dataframe):
-    # Place to write code
-    return dataframe
+    pass

@@ -1,4 +1,5 @@
 import parser_settings as settings
+import parser_processing
 from pathlib import Path
 import download_settings
 import shutil
@@ -28,11 +29,11 @@ class Parser:
         return pandas.DataFrame(data)
 
     @staticmethod
-    def create_csv_folder():
-        if os.path.exists(settings.CSV_PATH) and os.path.isdir(settings.CSV_PATH):
-            shutil.rmtree(settings.CSV_PATH, ignore_errors=True)
-        Path(settings.CSV_PATH).mkdir(parents=True, exist_ok=True)
-        print('Completed csv folder recreated!\n')
+    def create_output_folder():
+        if os.path.exists(settings.OUTPUT_PATH) and os.path.isdir(settings.OUTPUT_PATH):
+            shutil.rmtree(settings.OUTPUT_PATH, ignore_errors=True)
+        Path(settings.OUTPUT_PATH).mkdir(parents=True, exist_ok=True)
+        print('Completed output folder recreated!\n')
 
     @staticmethod
     def save_dataframe(dataframe, form_name, as_source=False):
@@ -57,6 +58,7 @@ class Parser:
 
     @staticmethod
     def create_source_csv_files(processing_forms=True):
+        forms_df = {}
         for form_name in settings.FORMS:
             print('Parsing dataframe form dbf for form %s...' % form_name)
             form = settings.FORMS[form_name]
@@ -64,7 +66,7 @@ class Parser:
             dataframes = []
             for date in os.listdir(form_dir):
                 date_dir = '{}/{}'.format(form_dir, date)
-                file = [file for file in os.listdir(date_dir) if form.pars_file.lower() in file.lower()][0]
+                file = [file for file in os.listdir(date_dir) if form.lower() in file.lower()][0]
                 file_dir = '{}/{}'.format(date_dir, file)
                 dataframes.append(Parser.dbf_to_dataframe(file_dir))
             dataframe = pandas.concat(dataframes)
@@ -72,10 +74,19 @@ class Parser:
             Parser.save_dataframe(dataframe, form_name, as_source=True)
             print('Parsing for form %s from dbf completed and saved!\n' % form_name)
             if processing_forms:
-                print('Processing %s form...' % form_name)
-                dataframe = form.processing_func(dataframe)
-                Parser.save_dataframe(dataframe, form_name)
-                print('Processing completed and saved to csv!\n')
+                forms_df[form_name] = dataframe
+        if processing_forms:
+            print('Processing forms dataframes...')
+            parser_processing.processing_forms(forms_df)
+            print('Processing forms dataframes completed!')
+
+    @staticmethod
+    def load_dataframe_from_input(csv_path):
+        return pandas.read_csv(settings.INPUT_PATH + csv_path, encoding='ansi')
+
+    @staticmethod
+    def save_dataframe_to_output(dataframe, csv_path):
+        dataframe.to_csv(settings.OUTPUT_PATH + csv_path, index=False, encoding='ansi')
 
     @staticmethod
     def pars_forms(recreate_sources=False):
@@ -84,7 +95,7 @@ class Parser:
                 shutil.rmtree(settings.SOURCE_CSV_PATH, ignore_errors=True)
             print('Sources folder deleted!\n')
 
-        Parser.create_csv_folder()
+        Parser.create_output_folder()
 
         if not Parser.check_source_csv_folder():
             print('Sources csv files not found...\n')
@@ -92,12 +103,13 @@ class Parser:
             return
         print('Sources csv files found!\n')
 
+        forms_df = {}
         for form_name in settings.FORMS:
             print('Reading dataframe from csv for form %s...' % form_name)
             csv_path = '{}/{}.csv'.format(settings.SOURCE_CSV_PATH, form_name)
             dataframe = pandas.read_csv(csv_path, encoding='ansi')
             print('Reading dataframe completed!\n')
-            print('Processing %s form...' % form_name)
-            dataframe = settings.FORMS[form_name].processing_func(dataframe)
-            Parser.save_dataframe(dataframe, form_name)
-            print('Processing completed and saved to csv!\n')
+            forms_df[form_name] = dataframe
+        print('Processing forms dataframes...')
+        parser_processing.processing_forms(forms_df)
+        print('Processing forms dataframes completed!')

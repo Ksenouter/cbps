@@ -248,5 +248,5 @@ dmypy.json
 
 # Program files
 dbf/
-csv/
 source_csv/
+output/
