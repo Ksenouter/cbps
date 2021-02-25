@@ -78,7 +78,6 @@ class Parser:
                 file = [file for file in os.listdir(date_dir) if form.lower() in file.lower()][0]
                 file_dir = '{}/{}'.format(date_dir, file)
                 dataframes.append(Parser.dbf_to_dataframe(file_dir, date))
-            print()
             dataframe = pandas.concat(dataframes)
             dataframe = Parser.excel_pars_reg_nums(dataframe)
             Parser.save_dataframe(dataframe, form_name, as_source=True)

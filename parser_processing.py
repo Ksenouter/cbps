@@ -1,4 +1,3 @@
-from dbf_parser import Parser
 import parser_settings as settings
 import pandas as pd
 
