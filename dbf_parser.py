@@ -2,6 +2,7 @@ import parser_settings as settings
 import parser_processing
 from pathlib import Path
 import download_settings
+import datetime
 import shutil
 import pandas
 import dbf
@@ -20,12 +21,20 @@ class Parser:
         return Parser.dbf_get_column(table, table.field_names.index(col_name))
 
     @staticmethod
-    def dbf_to_dataframe(path):
+    def dbf_to_dataframe(path, form_date):
         print('Parsing "%s"...' % path)
         table = dbf.Table(path, codepage='cp866')
         table.open()
         data = {col: Parser.dbf_get_column_by_name(table, col) for col in table.field_names}
+        if form_date[:3] == '102' and table.field_names[-1] != settings.FROM_102_DATE_COLUMN:
+            year = int(form_date[4:8])
+            month = int(form_date[8:10])
+            day = int(form_date[10:])
+            date = datetime.date(year, month, day)
+            rows_num = len(data[next(iter(data))])
+            data[settings.FROM_102_DATE_COLUMN] = [date for i in range(rows_num)]
         table.close()
+
         return pandas.DataFrame(data)
 
     @staticmethod
@@ -68,7 +77,8 @@ class Parser:
                 date_dir = '{}/{}'.format(form_dir, date)
                 file = [file for file in os.listdir(date_dir) if form.lower() in file.lower()][0]
                 file_dir = '{}/{}'.format(date_dir, file)
-                dataframes.append(Parser.dbf_to_dataframe(file_dir))
+                dataframes.append(Parser.dbf_to_dataframe(file_dir, date))
+            print()
             dataframe = pandas.concat(dataframes)
             dataframe = Parser.excel_pars_reg_nums(dataframe)
             Parser.save_dataframe(dataframe, form_name, as_source=True)
