@@ -26,13 +26,13 @@ class Parser:
         table = dbf.Table(path, codepage='cp866')
         table.open()
         data = {col: Parser.dbf_get_column_by_name(table, col) for col in table.field_names}
-        if form_date[:3] == '102' and table.field_names[-1] != settings.FROM_102_DATE_COLUMN:
+        if form_date[:3] in settings.FORMS_WITH_DATE and table.field_names[-1] != settings.FORMS_DATE_COLUMN:
             year = int(form_date[4:8])
             month = int(form_date[8:10])
             day = int(form_date[10:])
             date = datetime.date(year, month, day)
             rows_num = len(data[next(iter(data))])
-            data[settings.FROM_102_DATE_COLUMN] = [date for i in range(rows_num)]
+            data[settings.FORMS_DATE_COLUMN] = [date for i in range(rows_num)]
         table.close()
 
         return pandas.DataFrame(data)

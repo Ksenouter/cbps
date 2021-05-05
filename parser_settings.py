@@ -4,7 +4,8 @@ FORMS = {
     '135': '_135_3.DBF',
 }
 
-FROM_102_DATE_COLUMN = 'DT'
+FORMS_WITH_DATE = ['102', '135']
+FORMS_DATE_COLUMN = 'DT'
 
 SOURCE_CSV_PATH = './source_csv'
 
