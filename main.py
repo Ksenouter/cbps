@@ -4,7 +4,7 @@ from dbf_parser import Parser
 
 def main():
     scraper = Scraper()
-    scraper.download_files()
+    scraper.download_files(reload=False)
     scraper.extract_downloads()
     Parser.pars_forms(recreate_sources=False)
 

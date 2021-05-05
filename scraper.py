@@ -24,14 +24,22 @@ class Scraper:
             return True if result else shutil.rmtree(settings.PATH, ignore_errors=True)
         return False
 
-    def download_files(self):
-        if self.check_downloads_folder():
-            print('Downloads found!\n')
-            return
-        print('Downloads not found!\n')
+    def download_files(self, reload=False):
+        if reload:
+            print('Ignoring previous downloads!\n')
+        else:
+            if self.check_downloads_folder():
+                print('Downloads found!\n')
+                return
+            else:
+                print('Downloads not found!\n')
 
         url = self.BASE_URL + 'vfs/credit/forms/'
+
+        if os.path.exists(settings.PATH) and os.path.isdir(settings.PATH):
+            shutil.rmtree(settings.PATH, ignore_errors=True)
         Path(settings.PATH).mkdir(parents=True, exist_ok=True)
+
         for file_name in self.get_files_names():
             print('Downloading "%s" file...' % file_name)
             link = url + file_name

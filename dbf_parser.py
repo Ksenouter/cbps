@@ -60,7 +60,7 @@ class Parser:
     def check_source_csv_folder():
         if os.path.exists(settings.SOURCE_CSV_PATH) and os.path.isdir(settings.SOURCE_CSV_PATH):
             files = [file for file in os.listdir(settings.SOURCE_CSV_PATH)]
-            result = sorted(files) == sorted([key + '.csv' for key in settings.FORMS.keys()])
+            result = sorted(files) == sorted([key + '.csv' for key in download_settings.FORMS])
             return True if result else shutil.rmtree(settings.SOURCE_CSV_PATH, ignore_errors=True)
         Path(settings.SOURCE_CSV_PATH).mkdir(parents=True, exist_ok=True)
         return False
@@ -68,7 +68,7 @@ class Parser:
     @staticmethod
     def create_source_csv_files(processing_forms=True):
         forms_df = {}
-        for form_name in settings.FORMS:
+        for form_name in download_settings.FORMS:
             print('Parsing dataframe form dbf for form %s...' % form_name)
             form = settings.FORMS[form_name]
             form_dir = '{}/{}'.format(download_settings.FILES_PATH, form_name)
@@ -113,7 +113,7 @@ class Parser:
         print('Sources csv files found!\n')
 
         forms_df = {}
-        for form_name in settings.FORMS:
+        for form_name in download_settings.FORMS:
             print('Reading dataframe from csv for form %s...' % form_name)
             csv_path = '{}/{}.csv'.format(settings.SOURCE_CSV_PATH, form_name)
             dataframe = pandas.read_csv(csv_path, encoding='ansi')
